@@ -66,6 +66,8 @@ bool AngryBirdsGame::init()
 		return false;
 	}
 
+	setUpGameobjects();
+
 	return true;
 }
 
@@ -136,9 +138,19 @@ void AngryBirdsGame::keyHandler(const ASGE::SharedEventData data)
 	
 	else if (in_menu)
 	{
-		if (key->key == ASGE::KEYS::KEY_SPACE)
+		if (key->key == ASGE::KEYS::KEY_SPACE
+			&& key->action == ASGE::KEYS::KEY_RELEASED)
 		{
-			in_menu = !in_menu;
+			in_menu = false;
+			in_tutorial = true;
+		}
+	}
+	else if (in_tutorial)
+	{
+		if (key->key == ASGE::KEYS::KEY_SPACE
+			&& key->action == ASGE::KEYS::KEY_RELEASED)
+		{
+			in_tutorial = false;
 		}
 	}
 }
@@ -201,5 +213,69 @@ void AngryBirdsGame::render(const ASGE::GameTime &)
 	else
 	{
 		renderer->renderSprite(*background_layer.spriteComponent()->getSprite());
+		if (in_tutorial)
+		{
+			renderer->renderText("HOW TO PLAY", 50, 100, ASGE::COLOURS::BLUE);
+			renderer->renderText("Use the mouse to aim the rocks in the slingshot.", 60, 150, ASGE::COLOURS::BLACK);
+			renderer->renderText("Try to hit the aliens using the rocks to win the level, complete it in the least number of rocks to earn the most points.", 60, 175, ASGE::COLOURS::BLACK);
+		
+			renderer->renderText("Press Space to continue", game_width/2 - 60, 500, ASGE::COLOURS::BLACK);
+
+		}
+		else
+		{
+			std::string score_str = "Score: " + std::to_string(score);
+			renderer->renderText(score_str.c_str(), 50, 100, ASGE::COLOURS::BLUE);
+
+			for (int i = 0; i < ammo_array_size; i++)
+			{	
+				renderer->renderSprite(*ammo[i].spriteComponent()->getSprite());
+
+			}
+
+			for (int i = 0; i < enemy_array_size; i++)
+			{
+				renderer->renderSprite(*enemies[i].spriteComponent()->getSprite());
+
+			}
+		}
 	}
+}
+
+void AngryBirdsGame::setUpGameobjects()
+{
+	for (int i = 0; i < ammo_array_size; i++)
+	{
+		ammo[i].addSpriteComponent(renderer.get(), 
+			".\\Resources\\Textures\\MyAssets\\angeryrock.png");
+		
+		float new_x_pos = (i * 44) + 100;
+
+		ammo_sprite = ammo[i].spriteComponent()->getSprite();
+		ammo_sprite->xPos(new_x_pos);
+		ammo_sprite->yPos(825);
+		ammo_sprite->width(48);
+		ammo_sprite->height(48);
+	}
+
+	for (int i = 0; i < enemy_array_size; i++)
+	{
+		enemies[i].addSpriteComponent(renderer.get(),
+			".\\Resources\\Textures\\kenney_physicspack\\PNG\\Aliens\\alienBlue_suit.png");
+
+		float new_x_pos = (i * 60) + 1300;
+
+		enemy_sprite = enemies[i].spriteComponent()->getSprite();
+		enemy_sprite->xPos(new_x_pos);
+		enemy_sprite->yPos(825);
+		enemy_sprite->width(52);
+		enemy_sprite->height(52);
+	}
+
+	setUpActive();
+}
+
+void AngryBirdsGame::setUpActive()
+{
+
 }
