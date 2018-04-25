@@ -41,10 +41,11 @@ public:
 	*  @return a pointer to the objects sprite component (if any)
 	*/
 	 SpriteComponent* spriteComponent();
-
+	 bool visibility = true;
 
 private:
 
 	void freeSpriteComponent();	
 	SpriteComponent* sprite_component = nullptr;
+	
 };
