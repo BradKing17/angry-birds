@@ -54,7 +54,7 @@ private:
 	bool bird_in_air = false;
 
 	int score = 0;
-	vector2 start_pos = { 300, 700 };
+	vector2 start_pos = { 360, 700 };
 	double distance;
 	vector2 velocity = { 0,0 };
 	float move_speed_x = 7.0;
@@ -75,7 +75,12 @@ private:
 	rect enemy_box;
 	int number_of_enemies = enemy_array_size;
 	
-	
+	GameObject blocks[3];
+	int block_array_size = 3;
+	ASGE::Sprite* block_sprite = nullptr;
+	rect block_box;
+
+
 	GameObject ammo[5];
 	int ammo_array_size = 5;
 	ASGE::Sprite* ammo_sprite = nullptr;

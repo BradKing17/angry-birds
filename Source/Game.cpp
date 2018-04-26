@@ -323,12 +323,28 @@ void AngryBirdsGame::setUpGameobjects()
 		enemy_sprite->yPos(new_y_pos);
 		enemy_sprite->width(48);
 		enemy_sprite->height(48);
+		enemies[i].visibility = true;
+	}
+
+	for (int i = 0; i < block_array_size; i++)
+	{
+		blocks[i].addSpriteComponent(renderer.get(),
+			".\\Resources\\Textures\\kenney_physicspack\\PNG\\Wood elements\\elementWood014.png");
+
+		float new_x_pos = (i * 120) + 1300;
+		float new_y_pos = (i * -150) + 880;
+
+		block_sprite = blocks[i].spriteComponent()->getSprite();
+		block_sprite->xPos(new_x_pos);
+		block_sprite->yPos(new_y_pos);
+		block_sprite->width(96);
+		block_sprite->height(48);
 	}
 
 	//Slingshot Set Up
 	slingshot.addSpriteComponent(renderer.get(),
 		".\\Resources\\Textures\\MyAssets\\slingshot.png");
-	slingshot.spriteComponent()->getSprite()->xPos(270);
+	slingshot.spriteComponent()->getSprite()->xPos(330);
 	slingshot.spriteComponent()->getSprite()->yPos(700);
 
 	//Lose Set Up
@@ -413,6 +429,16 @@ void AngryBirdsGame::collision()
 		reload();
 	}
 
+	for (int i = 0; i <= enemy_array_size; i++)
+	{
+
+		block_box = blocks[i].spriteComponent()->getBoundingBox();
+		if (active_box.isInside(block_box))
+		{
+			reload();
+			break;
+		}
+	}
 
 	for (int i = 0; i <= enemy_array_size; i++)
 	{
@@ -452,8 +478,6 @@ void AngryBirdsGame::gameState()
 	{
 		game_state = -1;
 	}
-	
-
 }
 
 //UI Functions
@@ -480,6 +504,12 @@ void AngryBirdsGame::inGameUI()
 	for (int i = 0; i < ammo_array_size; i++)
 	{
 		renderer->renderSprite(*ammo[i].spriteComponent()->getSprite());
+	}
+
+	for (int i = 0; i < block_array_size; i++)
+	{
+			renderer->renderSprite(*blocks[i].spriteComponent()->getSprite());
+
 	}
 
 	for (int i = 0; i < enemy_array_size; i++)
