@@ -28,9 +28,11 @@ private:
 	void setUpActive();
 
 	//Game Functions
+	void preLaunch(float dt_sec);
 	void fire(float dt_sec);
 	void collision();
 	void reload();
+	void gameState();
 
 	//UI Functions
 	void howToPlayUI();
@@ -57,12 +59,14 @@ private:
 	vector2 velocity = { 0,0 };
 	float move_speed_x = 5.0;
 	float move_speed_y = 5.0;
-	float gravity = 0.005;
+	float gravity = -0.1;
 	int game_state = 0;
 
 	//Add your GameObjects
 	GameObject background_layer;
 	GameObject menu_layer;
+	GameObject lose_sprite;
+	GameObject win_sprite;
 
 	GameObject enemies[3];
 	int enemy_array_size = 3;

@@ -61,7 +61,7 @@ bool AngryBirdsGame::init()
 		return false;
 	}
 
-	if (!menu_layer.addSpriteComponent(renderer.get(), "Resources\\Textures\\menu.jpg"))
+	if (!menu_layer.addSpriteComponent(renderer.get(), "Resources\\Textures\\MyAssets\\menu.jpg"))
 	{
 		return false;
 	}
@@ -210,46 +210,14 @@ void AngryBirdsGame::update(const ASGE::GameTime& us)
 
 	if (!in_menu)
 	{
-		if (bird_grabbed)
-		{
-			active_ammo_sprite->xPos(mouse_x_pos);
-			active_ammo_sprite->yPos(mouse_y_pos);
-		}
+		//Bird Grabbed
+		preLaunch(dt_sec);
 
-
-		if (bird_in_air)
-		{
-			bird_grabbed = false;
-			float x_pos = active_ammo_sprite->xPos();
-			float y_pos = active_ammo_sprite->yPos();
-
-			x_pos += velocity.x * move_speed_x * (dt_sec);
-			y_pos += velocity.y * move_speed_y * (dt_sec);
-
-			move_speed_y -= gravity;
-			active_ammo_sprite->xPos(x_pos);
-			active_ammo_sprite->yPos(y_pos);
-			fire(dt_sec);
-		}
-		//Check for slingshot range
-		inputs->getCursorPos(mouse_x_pos, mouse_y_pos);
-		distance = sqrt(pow(start_pos.x - mouse_x_pos, 2) + pow(start_pos.y - mouse_y_pos, 2));
-		if (distance > 200)
-		{
-			bird_grabbed = false;
-		}
-
+		//Handles all collision
 		collision();
 
 		// Win/Lose State
-		if (number_of_enemies == 0)
-		{
-			game_state = 1;
-		}
-		if (ammo_array_size == 0)
-		{
-			game_state = -1;
-		}
+		gameState();
 	}
 }
 
@@ -300,6 +268,7 @@ void AngryBirdsGame::render(const ASGE::GameTime &)
 //Setup Functions
 void AngryBirdsGame::setUpGameobjects()
 {
+	//Ammo Set Up
 	for (int i = 0; i < ammo_array_size; i++)
 	{
 		ammo[i].addSpriteComponent(renderer.get(), 
@@ -310,10 +279,11 @@ void AngryBirdsGame::setUpGameobjects()
 		ammo_sprite = ammo[i].spriteComponent()->getSprite();
 		ammo_sprite->xPos(new_x_pos);
 		ammo_sprite->yPos(825);
-		ammo_sprite->width(30);
-		ammo_sprite->height(30);
+		ammo_sprite->width(48);
+		ammo_sprite->height(48);
 	}
 
+	//Enemy Set Up
 	for (int i = 0; i < enemy_array_size; i++)
 	{
 		enemies[i].addSpriteComponent(renderer.get(),
@@ -324,11 +294,21 @@ void AngryBirdsGame::setUpGameobjects()
 		enemy_sprite = enemies[i].spriteComponent()->getSprite();
 		enemy_sprite->xPos(new_x_pos);
 		enemy_sprite->yPos(825);
-		enemy_sprite->width(30);
-		enemy_sprite->height(30);
+		enemy_sprite->width(48);
+		enemy_sprite->height(48);
 	}
 
-	
+	//Lose Set Up
+	lose_sprite.addSpriteComponent(renderer.get(),
+		".\\Resources\\Textures\\MyAssets\\You Lose text.png");
+	lose_sprite.spriteComponent()->getSprite()->xPos(100);
+	lose_sprite.spriteComponent()->getSprite()->yPos(100);
+
+	//Win Set Up
+	win_sprite.addSpriteComponent(renderer.get(),
+		".\\Resources\\Textures\\MyAssets\\You win text.png");
+	win_sprite.spriteComponent()->getSprite()->xPos(100);
+	win_sprite.spriteComponent()->getSprite()->yPos(100);
 }
 
 void AngryBirdsGame::setUpActive()
@@ -337,16 +317,50 @@ void AngryBirdsGame::setUpActive()
 		".\\Resources\\Textures\\MyAssets\\angeryrock.png");
 
 	active_ammo_sprite = active_ammo.spriteComponent()->getSprite();
-	active_ammo_sprite->xPos(300);
-	active_ammo_sprite->yPos(780);
+	active_ammo_sprite->xPos(start_pos.x);
+	active_ammo_sprite->yPos(start_pos.y);
 	active_ammo_sprite->width(42);
 	active_ammo_sprite->height(42);
 }
 
 //Gameplay Functions
+void AngryBirdsGame::preLaunch(float dt_sec)
+{
+	if (bird_grabbed)
+	{
+		active_ammo_sprite->xPos(mouse_x_pos);
+		active_ammo_sprite->yPos(mouse_y_pos);
+	}
+
+
+	if (bird_in_air)
+	{
+		fire(dt_sec);
+	}
+	//Check for slingshot range
+	inputs->getCursorPos(mouse_x_pos, mouse_y_pos);
+	distance = sqrt(pow(start_pos.x - mouse_x_pos, 2) + pow(start_pos.y - mouse_y_pos, 2));
+	if (distance > 200)
+	{
+		bird_grabbed = false;
+	}
+}
+
 void AngryBirdsGame::fire(float dt_sec)
 {
-	
+	bird_grabbed = false;
+	float x_pos = active_ammo_sprite->xPos();
+	float y_pos = active_ammo_sprite->yPos();
+
+	float direction_x = velocity.x *move_speed_x;
+	float direction_y = velocity.y * move_speed_x;
+
+	x_pos += direction_x * (dt_sec);
+	y_pos += direction_y * (dt_sec);
+
+	velocity.y -= gravity;
+	active_ammo_sprite->xPos(x_pos);
+	active_ammo_sprite->yPos(y_pos);
 }
 
 void AngryBirdsGame::collision()
@@ -361,7 +375,7 @@ void AngryBirdsGame::collision()
 	{
 
 		enemy_box = enemies[i].spriteComponent()->getBoundingBox();
-		if (active_box.isInside(enemy_box) && active_ammo.visibility == true)
+		if (active_box.isInside(enemy_box) && enemies[i].visibility == true)
 		{
 			enemies[i].visibility = false;
 			score += 1000;
@@ -383,6 +397,18 @@ void AngryBirdsGame::reload()
 	move_speed_y = 5.0;
 	bird_in_air = false;
 
+}
+
+void AngryBirdsGame::gameState()
+{
+	if (number_of_enemies == 0)
+	{
+		game_state = 1;
+	}
+	if (ammo_array_size == 0)
+	{
+		game_state = -1;
+	}
 }
 
 //UI Functions
@@ -425,10 +451,11 @@ void AngryBirdsGame::inGameUI()
 
 void AngryBirdsGame::winUI()
 {
-	renderer->renderText("You win", game_width / 2 - 100, game_height / 2, ASGE::COLOURS::BLUE);
+	renderer->renderSprite(*win_sprite.spriteComponent()->getSprite());
 }
 
 void AngryBirdsGame::loseUI()
 {
-	renderer->renderText("You lose", game_width / 2 - 100, game_height / 2, ASGE::COLOURS::BLUE);
+	renderer->renderSprite(*lose_sprite.spriteComponent()->getSprite());
 }
+
