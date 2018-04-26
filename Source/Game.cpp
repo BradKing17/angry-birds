@@ -166,6 +166,8 @@ void AngryBirdsGame::keyHandler(const ASGE::SharedEventData data)
 				game_state = 0;
 				setUpGameobjects();
 				setUpActive();
+				number_of_enemies = 3;
+				ammo_array_size = 5;
 			}
 		}
 	}
@@ -274,8 +276,16 @@ void AngryBirdsGame::render(const ASGE::GameTime &)
 		{
 			loseUI();
 		}
+		else if (game_state == 0)
+		{
+			inGameUI();
+		}
 
-		
+
+		//debug stuff
+		renderer->renderText(std::to_string(game_state), 1000, 50, ASGE::COLOURS::BLACK);
+		renderer->renderText(std::to_string(velocity.x), 1000, 75, ASGE::COLOURS::BLACK);
+		renderer->renderText(std::to_string(velocity.y), 1000, 100, ASGE::COLOURS::BLACK);
 					
 	}
 }
@@ -434,6 +444,7 @@ void AngryBirdsGame::gameState()
 	{
 		game_state = -1;
 	}
+	
 
 }
 
@@ -483,5 +494,6 @@ void AngryBirdsGame::winUI()
 void AngryBirdsGame::loseUI()
 {
 	renderer->renderSprite(*lose_sprite.spriteComponent()->getSprite());
+	renderer->renderText("Press SPACE to restart", 100, 200, ASGE::COLOURS::BLACK);
 }
 
