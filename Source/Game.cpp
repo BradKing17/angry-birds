@@ -168,6 +168,7 @@ void AngryBirdsGame::keyHandler(const ASGE::SharedEventData data)
 				setUpActive();
 				number_of_enemies = 3;
 				ammo_array_size = 5;
+				score = 0;
 			}
 		}
 	}
@@ -283,9 +284,9 @@ void AngryBirdsGame::render(const ASGE::GameTime &)
 
 
 		//debug stuff
-		renderer->renderText(std::to_string(game_state), 1000, 50, ASGE::COLOURS::BLACK);
+	/*	renderer->renderText(std::to_string(game_state), 1000, 50, ASGE::COLOURS::BLACK);
 		renderer->renderText(std::to_string(velocity.x), 1000, 75, ASGE::COLOURS::BLACK);
-		renderer->renderText(std::to_string(velocity.y), 1000, 100, ASGE::COLOURS::BLACK);
+		renderer->renderText(std::to_string(velocity.y), 1000, 100, ASGE::COLOURS::BLACK);*/
 					
 	}
 }
@@ -299,7 +300,7 @@ void AngryBirdsGame::setUpGameobjects()
 		ammo[i].addSpriteComponent(renderer.get(), 
 			".\\Resources\\Textures\\MyAssets\\angeryrock.png");
 		
-		float new_x_pos = (i * 24) + 50;
+		float new_x_pos = (i * 12) + 10;
 
 		ammo_sprite = ammo[i].spriteComponent()->getSprite();
 		ammo_sprite->xPos(new_x_pos);
@@ -314,14 +315,21 @@ void AngryBirdsGame::setUpGameobjects()
 		enemies[i].addSpriteComponent(renderer.get(),
 			".\\Resources\\Textures\\kenney_physicspack\\PNG\\Aliens\\alienBlue_suit.png");
 
-		float new_x_pos = (i * 60) + 1300;
+		float new_x_pos = (i * 140) + 1300;
+		float new_y_pos = (i * -150) + 835;
 
 		enemy_sprite = enemies[i].spriteComponent()->getSprite();
 		enemy_sprite->xPos(new_x_pos);
-		enemy_sprite->yPos(825);
+		enemy_sprite->yPos(new_y_pos);
 		enemy_sprite->width(48);
 		enemy_sprite->height(48);
 	}
+
+	//Slingshot Set Up
+	slingshot.addSpriteComponent(renderer.get(),
+		".\\Resources\\Textures\\MyAssets\\slingshot.png");
+	slingshot.spriteComponent()->getSprite()->xPos(270);
+	slingshot.spriteComponent()->getSprite()->yPos(700);
 
 	//Lose Set Up
 	lose_sprite.addSpriteComponent(renderer.get(),
@@ -467,6 +475,8 @@ void AngryBirdsGame::inGameUI()
 		renderer->renderSprite(*active_ammo.spriteComponent()->getSprite());
 	}
 
+	renderer->renderSprite(*slingshot.spriteComponent()->getSprite());
+
 	for (int i = 0; i < ammo_array_size; i++)
 	{
 		renderer->renderSprite(*ammo[i].spriteComponent()->getSprite());
@@ -479,11 +489,6 @@ void AngryBirdsGame::inGameUI()
 			renderer->renderSprite(*enemies[i].spriteComponent()->getSprite());
 		}
 	}
-
-	//debug stuff
-	renderer->renderText(std::to_string(move_speed_y), 1000, 50, ASGE::COLOURS::BLACK);
-	renderer->renderText(std::to_string(velocity.x), 1000, 75, ASGE::COLOURS::BLACK);
-	renderer->renderText(std::to_string(velocity.y), 1000, 100, ASGE::COLOURS::BLACK);
 }
 
 void AngryBirdsGame::winUI()

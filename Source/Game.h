@@ -57,8 +57,8 @@ private:
 	vector2 start_pos = { 300, 700 };
 	double distance;
 	vector2 velocity = { 0,0 };
-	float move_speed_x = 5.0;
-	float move_speed_y = 5.0;
+	float move_speed_x = 7.0;
+	float move_speed_y = 7.0;
 	float gravity = -0.1;
 	int game_state = 0;
 
@@ -67,6 +67,7 @@ private:
 	GameObject menu_layer;
 	GameObject lose_sprite;
 	GameObject win_sprite;
+	GameObject slingshot;
 
 	GameObject enemies[3];
 	int enemy_array_size = 3;
