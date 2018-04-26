@@ -144,6 +144,8 @@ void AngryBirdsGame::keyHandler(const ASGE::SharedEventData data)
 		{
 			in_menu = false;
 			in_tutorial = true;
+
+			
 		}
 	}
 	else if (in_tutorial)
@@ -152,6 +154,19 @@ void AngryBirdsGame::keyHandler(const ASGE::SharedEventData data)
 			&& key->action == ASGE::KEYS::KEY_RELEASED)
 		{
 			in_tutorial = false;
+		}
+	}
+	else
+	{
+		if (key->key == ASGE::KEYS::KEY_SPACE
+			&& key->action == ASGE::KEYS::KEY_RELEASED)
+		{
+			if (game_state == -1)
+			{
+				game_state = 0;
+				setUpGameobjects();
+				setUpActive();
+			}
 		}
 	}
 }
@@ -371,6 +386,16 @@ void AngryBirdsGame::collision()
 	{
 		reload();
 	}
+	if (active_ammo_sprite->yPos() < 0)
+	{
+		reload();
+	}
+	if (active_ammo_sprite->xPos() < 0)
+	{
+		reload();
+	}
+
+
 	for (int i = 0; i <= enemy_array_size; i++)
 	{
 
@@ -409,6 +434,7 @@ void AngryBirdsGame::gameState()
 	{
 		game_state = -1;
 	}
+
 }
 
 //UI Functions
