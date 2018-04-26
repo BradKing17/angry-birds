@@ -429,6 +429,11 @@ void AngryBirdsGame::collision()
 		reload();
 	}
 
+	if (active_ammo_sprite->xPos() > game_width)
+	{
+		reload();
+	}
+
 	for (int i = 0; i <= enemy_array_size; i++)
 	{
 
